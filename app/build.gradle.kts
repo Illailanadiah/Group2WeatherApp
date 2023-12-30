@@ -32,6 +32,9 @@ dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("com.android.volley:volley")
+    implementation("com.google.android.gms:play-services-location:17.0.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.android.volley:volley:1.1.1")
     implementation("com.google.android.gms:play-services-location:17.0.0")
     implementation("com.google.android.material:material:1.11.0")
