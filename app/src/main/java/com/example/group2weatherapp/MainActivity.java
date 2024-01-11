@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode==PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permissions granted..", Toast.LENGTH_SHORT).show();
                 {else{
                     Toast.makeText(this, "Please provide the permissions", Toast.LENGTH_SHORT).show();
@@ -136,6 +136,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getWeatherInfo(String cityName){
+        String url = "http://api.weatherapi.com/v1/current.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=\n" + "yes&alerts=yes";
+        cityNameTV.setText(cityName);
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+    }
+
+    /*
+    private void getWeatherInfo(String cityName){
         String url = "http://api.weatherapi.com/v1/current.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=\n" +
                 "yes&alerts=yes";
         cityNameTV.setText(cityName);
@@ -163,19 +170,32 @@ public class MainActivity extends AppCompatActivity {
                     Picasso.get().load("https://wallpapercave.com/wp/wp3404597.jpg").into(backIV);
                 }
 
-                JSONObject forecastObj = response.getJSONObject("forecast")
+                JSONObject forecastObj = response.getJSONObject("forecast");
+                JSONObject forcast0 = forecastObj.getJSONArray("forecastday").getJSONObject(0);
+                JSONArray hourArray = forcast0.getJSONArray("hour");
+
+                for(int i=0; i<hourArray.length(); i++){
+                    JSONObject hourObj = hourArray.getJSONObject(i);
+                    String time = hourObj.getString("time");
+                    String temper = hourObj.getString("temp_c");
+                    String img = hourObj.getJSONObject("condition").getString("icon");
+                    String wind = hourObj.getString("wind_kph");
+                    weatherRVModalArrayList.add(new WeatherRVModal(time,temper,img,wind));
+                }
+                weatherRVAdapter.notifyDataSetChanged();
 
             }catch (JSONException e){
                 e.printStackTrace();
             }
         }
 
-    }, new Response.ErrorListener(){
-        @Override
-        public void onErrorResponse(VolleyError error){
-            Toast.makeText(MainActivity.this,"Please enter valid city name..", Toast.LENGTH_SHORT).show();
-        }
-    });
-requestQueue.add(jsonObjectRequest);
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error){
+                Toast.makeText(MainActivity.this,"Please enter valid city name..", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-}
+        requestQueue.add(jsonObjectRequest);
+        */
+
