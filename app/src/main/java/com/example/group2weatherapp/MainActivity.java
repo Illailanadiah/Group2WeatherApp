@@ -137,12 +137,14 @@ public class MainActivity extends AppCompatActivity {
         return cityName;
     }
 
+
     private void getWeatherInfo(String cityName){
         String url = "http://api.weatherapi.com/v1/forecast.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=yes&alerts=yes";
         cityNameTV.setText(cityName);
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
 
         JsonObjectRequest jsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>);
+
             @Override
             public void onResponse(JSONObject response){
             loadingPB.setVisibility(View.GONE);
@@ -151,11 +153,13 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 String temperature = response.getJSONObject("current").getString("temp_c");
-                temperatureTV.setText(temperature+"*c");
+                temperatureTV.setText(temperature+"°c");
                 int isDay = response.getJSONObject("current").getInt("is_day");
                 String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
                 String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
-                Picasso.get().load("http".concat(conditionIcon)).into(iconIV);
+
+                Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
+
                 conditionTV.setText(condition);
                 if(isDay==1){
                     //morning
@@ -181,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-        }
-
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
@@ -191,7 +193,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         requestQueue.add(jsonObjectRequest);
-    }
+
+        }
 }
+
+
 
 
