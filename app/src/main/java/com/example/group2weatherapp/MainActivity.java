@@ -24,7 +24,11 @@ import android.widget.TextView;
 import android.Manifest;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.squareup.picasso.Picasso;
 
@@ -98,19 +102,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==PERMISSION_CODE) {
-            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
                 Toast.makeText(this, "Permissions granted..", Toast.LENGTH_SHORT).show();
-                {else{
-                    Toast.makeText(this, "Please provide the permissions", Toast.LENGTH_SHORT).show();
-                }
-                }
-                    finish();
-                }
+            } else {
+                Toast.makeText(this, "Please provide the permissions", Toast.LENGTH_SHORT).show();
             }
         }
+    }
 
     private String getCityName(double longitude, double latitude) {
         String cityName = "Not found";
@@ -136,19 +138,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getWeatherInfo(String cityName){
-        String url = "http://api.weatherapi.com/v1/current.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=\n" + "yes&alerts=yes";
-        cityNameTV.setText(cityName);
-        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-    }
-
-    /*
-    private void getWeatherInfo(String cityName){
-        String url = "http://api.weatherapi.com/v1/current.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=\n" +
-                "yes&alerts=yes";
+        String url = "http://api.weatherapi.com/v1/forecast.json?key=50a429d0956d4126a18151015240201 &q="+cityName+"&days=1&aqi=yes&alerts=yes";
         cityNameTV.setText(cityName);
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
 
-        JsonObjectRequest jsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.listener<JSONObject)
+        JsonObjectRequest jsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>);
             @Override
             public void onResponse(JSONObject response){
             loadingPB.setVisibility(View.GONE);
@@ -161,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 int isDay = response.getJSONObject("current").getInt("is_day");
                 String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
                 String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
-                Picasso.get().load("http".concat(conditionIcon)).info(iconIV);
+                Picasso.get().load("http".concat(conditionIcon)).into(iconIV);
                 conditionTV.setText(condition);
                 if(isDay==1){
                     //morning
@@ -197,5 +191,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         requestQueue.add(jsonObjectRequest);
-        */
+    }
+}
+
 
