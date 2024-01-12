@@ -52,6 +52,7 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
 
     @Override
     public int getItemCount() {
+
         return weatherRVModalArrayList.size();
     }
 
