@@ -34,7 +34,7 @@
             android:textAlignment="center"
             android:textSize="20sp"
             android:layout_below="@+id/idTVTime"
-            android:textColor="color/white"
+            android:textColor="@color/white"
             />
 
         <ImageView
