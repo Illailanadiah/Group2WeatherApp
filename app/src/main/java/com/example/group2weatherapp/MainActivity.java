@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
@@ -143,47 +144,48 @@ public class MainActivity extends AppCompatActivity {
         cityNameTV.setText(cityName);
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
 
-        JsonObjectRequest jsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>);
+        JsonObjectRequest jsonObjectRequest= new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>(){
 
             @Override
-            public void onResponse(JSONObject response){
-            loadingPB.setVisibility(View.GONE);
-            homeRL.setVisibility(View.VISIBLE);
-            weatherRVModalArrayList.clear();
+            public void onResponse(JSONObject response) {
+                loadingPB.setVisibility(View.GONE);
+                homeRL.setVisibility(View.VISIBLE);
+                weatherRVModalArrayList.clear();
 
-            try {
-                String temperature = response.getJSONObject("current").getString("temp_c");
-                temperatureTV.setText(temperature+"°c");
-                int isDay = response.getJSONObject("current").getInt("is_day");
-                String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
-                String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
+                try {
+                    String temperature = response.getJSONObject("current").getString("temp_c");
+                    temperatureTV.setText(temperature + "°c");
+                    int isDay = response.getJSONObject("current").getInt("is_day");
+                    String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
+                    String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
 
-                Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
+                    Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
 
-                conditionTV.setText(condition);
-                if(isDay==1){
-                    //morning
-                    Picasso.get().load("https://cdn6.f-cdn.com/contestentries/329593/10695369/569a73ba941d5_thumb900.jpg").into(backIV);
-                }else {
-                    Picasso.get().load("https://wallpapercave.com/wp/wp3404597.jpg").into(backIV);
+                    conditionTV.setText(condition);
+                    if (isDay == 1) {
+                        //morning
+                        Picasso.get().load("https://cdn6.f-cdn.com/contestentries/329593/10695369/569a73ba941d5_thumb900.jpg").into(backIV);
+                    } else {
+                        Picasso.get().load("https://wallpapercave.com/wp/wp3404597.jpg").into(backIV);
+                    }
+
+                    JSONObject forecastObj = response.getJSONObject("forecast");
+                    JSONObject forcast0 = forecastObj.getJSONArray("forecastday").getJSONObject(0);
+                    JSONArray hourArray = forcast0.getJSONArray("hour");
+
+                    for (int i = 0; i < hourArray.length(); i++) {
+                        JSONObject hourObj = hourArray.getJSONObject(i);
+                        String time = hourObj.getString("time");
+                        String temper = hourObj.getString("temp_c");
+                        String img = hourObj.getJSONObject("condition").getString("icon");
+                        String wind = hourObj.getString("wind_kph");
+                        weatherRVModalArrayList.add(new WeatherRVModal(time, temper, img, wind));
+                    }
+                    weatherRVAdapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-                JSONObject forecastObj = response.getJSONObject("forecast");
-                JSONObject forcast0 = forecastObj.getJSONArray("forecastday").getJSONObject(0);
-                JSONArray hourArray = forcast0.getJSONArray("hour");
-
-                for(int i=0; i<hourArray.length(); i++){
-                    JSONObject hourObj = hourArray.getJSONObject(i);
-                    String time = hourObj.getString("time");
-                    String temper = hourObj.getString("temp_c");
-                    String img = hourObj.getJSONObject("condition").getString("icon");
-                    String wind = hourObj.getString("wind_kph");
-                    weatherRVModalArrayList.add(new WeatherRVModal(time,temper,img,wind));
-                }
-                weatherRVAdapter.notifyDataSetChanged();
-
-            }catch (JSONException e){
-                e.printStackTrace();
             }
         }, new Response.ErrorListener(){
             @Override
